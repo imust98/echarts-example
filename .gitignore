@@ -1,0 +1,14 @@
+*.iml
+.idea/
+*.diff
+*.patch
+*.bak
+.DS_Store
+node_modules/
+npm-debug.log
+.*proj
+.svn/
+*.swp
+*.swo
+*.log
+*.jpg

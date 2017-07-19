@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>省份地图</title>
+	<script type="text/javascript" src='./../echarts.js'></script>
+	<script type="text/javascript" src='./province.json.js'></script>
+</head>
+<body>
+	<div id='main' style='width: 800px;height:600px;margin: 100px auto'></div>
+	<script type="text/javascript">
+    var data = [
+     {name: '湖州', value: 32},
+     {name: '宁波', value: 33},
+     {name: '绍兴', value: 63},
+     {name: '杭州', value: 84},
+     {name: '金华', value: 157},
+     {name: '衢州', value: 177},
+];
+var geoCoordMap = {
+    '湖州':[120.1,30.86],
+    '宁波':[121.56,29.86],
+    '绍兴':[120.58,30.01],
+    '杭州':[120.19,30.26],
+    '金华':[119.64,29.12],
+    '衢州':[118.88,28.97]
+};
+
+var convertData = function (data) {
+    var res = [];
+    for (var i = 0; i < data.length; i++) {
+        var geoCoord = geoCoordMap[data[i].name];
+        if (geoCoord) {
+            res.push({
+                name: data[i].name,
+                value: geoCoord.concat(data[i].value)
+            });
+        }
+    }
+    return res;
+};
+
+option = {
+    backgroundColor: '#404a59',
+    title: {
+        text: '浙江省主要城市CDN',
+        subtext: '',
+        sublink: '',
+        left: 'center',
+        textStyle: {
+            color: '#fff'
+        }
+    },
+    tooltip : {
+        trigger: 'item'
+    },
+    legend: {
+        orient: 'vertical',
+        y: 'bottom',
+        x:'right',
+        data:['cdn'],
+        textStyle: {
+            color: '#fff'
+        }
+    },
+    geo: {
+        map: 'zhejiang',
+        label: {
+            emphasis: {
+                show: false
+            }
+        },
+        roam: true,
+        itemStyle: {
+            normal: {
+                areaColor: '#323c48',
+                borderColor: '#111'
+            },
+            emphasis: {
+                areaColor: '#2a333d'
+            }
+        }
+    },
+    series : [
+        {
+            name: 'pm2.5',
+            type: 'scatter',
+            coordinateSystem: 'geo',
+            data: convertData(data),
+            symbolSize: function (val) {
+                return val[2] / 10;
+            },
+            label: {
+                normal: {
+                    formatter: '{b}',
+                    position: 'right',
+                    show: false
+                },
+                emphasis: {
+                    show: true
+                }
+            },
+            itemStyle: {
+                normal: {
+                    color: '#ddb926'
+                }
+            }
+        },
+        {
+            name: 'Top 5',
+            type: 'effectScatter',
+            coordinateSystem: 'geo',
+            data: convertData(data.sort(function (a, b) {
+                return b.value - a.value;
+            }).slice(0, 6)),
+            symbolSize: function (val) {
+                return val[2] / 10;
+            },
+            showEffectOn: 'render',
+            rippleEffect: {
+                brushType: 'stroke'
+            },
+            hoverAnimation: true,
+            label: {
+                normal: {
+                    formatter: '{b}',
+                    position: 'right',
+                    show: true
+                }
+            },
+            itemStyle: {
+                normal: {
+                    color: '#f4e925',
+                    shadowBlur: 10,
+                    shadowColor: '#333'
+                }
+            },
+            zlevel: 1
+        }
+    ]
+};
+	echarts.registerMap('zhejiang', provinceJson); // 注册地图
+    var myChart = echarts.init(document.getElementById('main'));
+    myChart.setOption(option);
+	</script>
+</body>
+</html>

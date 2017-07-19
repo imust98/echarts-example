@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>世界地图</title>
+	<script type="text/javascript" src='./../echarts.js'></script>
+	<script type="text/javascript" src='./world.json.js'></script>
+</head>
+<body>
+	<div id='main' style='width: 800px;height:600px;margin: 100px auto'></div>
+	<script type="text/javascript">
+		var v = [10,20,13,7,6,5,5,4,4,3,3];
+		var geoCoordMap = {
+	        '越南': [106.633394,10.792441],
+	        '美国': [-101.543212,38.297327],
+	        '香港': [114.190838,22.259745],
+	        '巴西': [-50.942436,-11.807860],
+	        '泰国': [100.708312,13.705836],
+	        '澳大利亚': [134.496303,-26.221547],
+	        '台湾省': [121.022363,23.721319],
+	        '中国': [111.2002,33.949888],
+	        '加拿大': [-107.327894,62.740586],
+	        '智利': [-70.357353,-26.963456],
+
+	    };
+
+	    var data = [
+	    {
+	        name: '美国',
+	        value: 10
+	    },
+	    {
+	        name: '中国',
+	        value: 64
+	    }, {
+	        name: '加拿大',
+	        value: 68
+	    }];
+
+	    function formtGCData(geoData, data, srcNam, dest) {
+	        var tGeoDt = [];
+	        if (dest) {
+	            for (var i = 0, len = data.length; i < len; i++) {
+	                if (srcNam != data[i].name) {
+	                    tGeoDt.push({
+	                        coords: [geoData[srcNam], geoData[data[i].name]]
+	                    });
+	                }
+	            }
+	        } else {
+	            for (var i = 0, len = data.length; i < len; i++) {
+	                if (srcNam != data[i].name) {
+	                    tGeoDt.push({
+	                        coords: [geoData[data[i].name], geoData[srcNam]]
+	                    });
+	                }
+	            }
+	        }
+	        return tGeoDt;
+	    }
+
+	    function formtVData(geoData, data, srcNam) {
+	        var tGeoDt = [];
+	        for (var i = 0, len = data.length; i < len; i++) {
+	            var tNam = data[i].name
+	            if (srcNam != tNam) {
+	                tGeoDt.push({
+	                    name: tNam,
+	                    value: geoData[tNam],
+	                    symbolSize: v[i],
+	                    itemStyle: {
+
+	                        normal: {
+	                            color: '#FFD24D',
+	                            borderColor: 'gold'
+	                        }
+	                    }
+	                });
+	            }
+
+	        }
+	        tGeoDt.push({
+	            name: srcNam,
+	            value: geoData[srcNam],
+	            symbolSize: 8,
+	            itemStyle: {
+	                normal: {
+	                    color: '#4DFFFF',
+	                    borderColor: '#fff'
+	                }
+	            }
+	        });
+	        return tGeoDt;
+	    }
+	    var planePath = 'arrow';
+
+		var option = {
+	    backgroundColor:'#013769',
+	    geo: {
+	        name: 'Enroll distribution',
+	        type: 'map',
+	        map: 'world',
+	        roam: true,
+	        left: 20, top: 60, right: 20, bottom: 60,
+	        label: {
+	            emphasis: {
+	                show: false
+	            }
+	        },
+	        itemStyle: {
+	            normal: {
+	                // shadowBlur: 30,
+	                // shadowColor: 'rgba(0, 0, 0,0.8)',
+	                areaColor: '#022548',
+	                borderColor: '#0DABEA'
+	            },
+	            emphasis: {
+	                areaColor: '#011B34'
+	            }
+	        },
+	        regions:[{
+                name:'China',
+                itemStyle:{
+                    normal:{
+                        areaColor:'yellow',
+                        color:'#2a333d'
+                    }
+                }
+            },{
+                name:'United States of America',
+                itemStyle:{
+                    normal:{
+                        areaColor:'green',
+                        color:'#2a333d'
+                    }
+                }
+            }]
+	    },
+	    series: [
+	    // {
+
+	    //         type: 'lines',
+	    //         zlevel: 2,
+
+	    //         effect: {
+	    //             show: true,
+	    //             period: 6,
+	    //             trailLength: 0.1,
+	    //             color: '#FFB973',
+	    //             symbol: planePath,
+	    //             symbolSize: 5
+	    //         },
+	    //         lineStyle: {
+	    //             normal: {
+	    //                 color: '#FFB973',
+	    //                 width: 1,
+	    //                 opacity: 0.2,
+	    //                 curveness: 0.2
+	    //             }
+	    //         },
+	    //         data: formtGCData(geoCoordMap, data, '南宁', true)
+	    //     },
+	    //         {
+
+	    //             type: 'lines',
+	    //             zlevel: 2,
+	    //             effect: {
+	    //                 show: true,
+	    //                 period: 6,
+	    //                 trailLength: 0.1,
+	    //                 color: '#9CE6FE',
+	    //                 symbol: planePath,
+	    //                 symbolSize: 5
+	    //             },
+	    //             lineStyle: {
+	    //                 normal: {
+	    //                     color: '#65A2C2',
+	    //                     width: 1,
+	    //                     opacity: 0.4,
+	    //                     curveness: 0.2
+	    //                 }
+	    //             },
+	    //             data: formtGCData(geoCoordMap, data, '南宁', false)
+	    //         },
+	            {
+	                type: 'effectScatter',
+	                coordinateSystem: 'geo',
+	                zlevel: 2,
+	                rippleEffect: {
+	                    period: 4,
+	                    scale: 4,
+	                    brushType: 'stroke',
+	                },
+	                label: {
+	                    normal: {
+	                        show: true,
+	                        position: 'right',
+	                        formatter: '{b}'
+	                    }
+	                },
+	                symbolSize: 5,
+	                itemStyle: {
+	                    normal: {
+	                        color: '#fff',
+	                        borderColor: 'gold'
+	                    }
+	                },
+
+	                data: formtVData(geoCoordMap, data, '南宁')
+	            }]
+	};
+
+	echarts.registerMap('world', worldJson); // 注册地图
+    var myChart = echarts.init(document.getElementById('main'));
+    myChart.setOption(option);
+	</script>
+</body>
+</html>
